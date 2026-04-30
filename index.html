@@ -51,22 +51,21 @@ body {
   background: #2c2c54;
   padding: 25px;
   border-radius: 18px;
-  font-size: 18px;
 }
 
 /* album */
-.album img {
-  width: 100%;
-  border-radius: 12px;
-  cursor: pointer;
-}
 .album {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
+.album img {
+  width: 100%;
+  border-radius: 12px;
+  cursor: pointer;
+}
 
-/* fullscreen viewer */
+/* viewer */
 #viewer {
   position: fixed;
   top:0;
@@ -87,12 +86,12 @@ body {
 
 /* dots */
 .dots {
-  margin-top: 15px;
+  margin-top: 10px;
 }
 .dot {
   height: 10px;
   width: 10px;
-  margin: 4px;
+  margin: 3px;
   border-radius: 50%;
   display: inline-block;
   background: gray;
@@ -101,17 +100,31 @@ body {
   background: white;
 }
 
-/* notes (paper style) */
+/* paper note */
 .note {
   background: #fff8dc;
   color: #2b2b2b;
   padding: 22px;
   border-radius: 12px;
   margin: 15px 0;
-  text-align: left;
-  line-height: 1.7;
   font-family: 'Handlee', cursive;
   box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  text-align: left;
+}
+
+/* envelope */
+.envelope {
+  background: #ff6b81;
+  padding: 40px;
+  border-radius: 15px;
+  margin: 20px auto;
+  width: 80%;
+  max-width: 300px;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+.seal {
+  font-size: 18px;
 }
 
 /* media */
@@ -121,7 +134,7 @@ video {
   border-radius: 12px;
 }
 
-/* buttons */
+/* button */
 button {
   padding: 12px 18px;
   margin-top: 15px;
@@ -187,7 +200,7 @@ button {
   <button onclick="goBack()">Back</button>
 </div>
 
-<!-- FULLSCREEN -->
+<!-- VIEWER -->
 <div id="viewer" onclick="closeViewer(event)">
   <img id="fullImg">
   <div class="dots" id="dots"></div>
@@ -213,9 +226,12 @@ button {
 
 <!-- MESSAGE -->
 <div id="message" class="screen">
+
   <h2>💌 Message</h2>
 
-  <button onclick="skipTyping()">⏩ Skip Animation</button>
+  <div id="envelope" class="envelope" onclick="openLetter()">
+    <div class="seal">💖 Tap to open letter</div>
+  </div>
 
   <div class="note">
     <b>-About You-</b><br><br>
@@ -259,9 +275,7 @@ function show(id){
   }
 
   if(id==='message'){
-    typeWriter(aboutText,"aboutText",15,()=>{
-      typeWriter(msgText,"msgText",15);
-    });
+    resetMessage();
   }
 }
 
@@ -272,94 +286,77 @@ function goBack(){
   show('menu');
 }
 
-/* IMAGE VIEWER + SWIPE */
-let images=[];
-let currentIndex=0;
+/* ENVELOPE */
+function openLetter(){
+  document.getElementById("envelope").style.display="none";
 
-for(let i=1;i<=20;i++){
-  images.push(`photo${i}.jpg`);
+  typeWriter(aboutText,"aboutText",12,()=>{
+    typeWriter(msgText,"msgText",12);
+  });
+
+  document.getElementById("message").addEventListener("click",instantShow);
 }
 
-function openImg(src){
-  currentIndex = images.indexOf(src);
-  viewer.style.display="flex";
-  updateImg();
+/* instant show */
+let typing=true;
+function instantShow(){
+  if(!typing) return;
+
+  document.getElementById("aboutText").innerHTML=aboutText;
+  document.getElementById("msgText").innerHTML=msgText;
+
+  typing=false;
 }
 
-function updateImg(){
-  fullImg.src = images[currentIndex];
-  updateDots();
-}
-
-function updateDots(){
-  let d="";
-  for(let i=0;i<images.length;i++){
-    d+=`<span class="dot ${i===currentIndex?'active':''}"></span>`;
-  }
-  dots.innerHTML=d;
-}
-
-/* swipe */
-let startX=0;
-viewer.addEventListener("touchstart",e=>startX=e.touches[0].clientX);
-viewer.addEventListener("touchend",e=>{
-  let endX=e.changedTouches[0].clientX;
-  if(startX-endX>50 && currentIndex<images.length-1){
-    currentIndex++; updateImg();
-  }
-  if(endX-startX>50 && currentIndex>0){
-    currentIndex--; updateImg();
-  }
-});
-
-function closeViewer(e){
-  if(e.target.id==="viewer"){
-    viewer.style.display="none";
-  }
+/* reset */
+function resetMessage(){
+  document.getElementById("envelope").style.display="block";
+  document.getElementById("aboutText").innerHTML="";
+  document.getElementById("msgText").innerHTML="";
+  typing=true;
 }
 
 /* TYPEWRITER */
-const aboutText=`Your go to-milk tea flavors:
+function typeWriter(text,id,speed,cb){
+  let i=0;
+  let el=document.getElementById(id);
+  el.innerHTML="";
+  typing=true;
+
+  function typingFn(){
+    if(i<text.length){
+      el.innerHTML+=text.charAt(i++);
+      setTimeout(typingFn,speed);
+    } else {
+      typing=false;
+      if(cb) cb();
+    }
+  }
+
+  typingFn();
+}
+
+/* FIXED ABOUT TEXT FORMAT */
+const aboutText = `Your go to-milk tea flavors:
 Dark nutella chsck
 Blueberry chsck
 Red Velvet
 Strawberry choco
 Dark choco
-Strawberry oreo choco
+Strawberry oreo chsck
 
-You love Jollibee, yum burger no patty.
+You love Jollibee a lot, you loved the pineapple juice there and you only like the yum burger without the patties (sakin mo pinapakain, maybe because ayaw mo nga sa beef)
 
-You like pizza ham & cheese, cheese fries.
+You like ham and cheese flav in pizza's
+and cheese in fries.
 
-You love strawberry/choco ice cream.
+Sa ice creams you like strawberry, chocolate, cookies and cream flavors.
 
-You don’t like beans in halo-halo.
+You don't like the Beans in the Halo-halo.
 
-You like simple veggies.
+You only eat repolyo, sitaw, potato and eggplant in vegetables.`;
 
-You like lotion/water on feet.`;
-
-const msgText=`Hi baby imissyouuuuu, I just want to thank you for all of your sacrifices for us. Thank you for treating me right, making me laugh, giving me hugs and kisses. I notice lately malambing ka sakin and I loved that side of you. Thank you so much baby. I also want to remind you that I love you so much baby. Mahal na mahal ka ng adi, no words can explain how much I love you. Sorry din baby kase nung nakaraan I make you mad kase I didn't fix my bags, and nagkukulang ang adi sa oras last time, I'm sorry baby ko. Always remember na mahal na mahal ka ng adi. iloveyouuuuu so much my love ❤️ `;
-
-function typeWriter(text,id,speed,cb){
-  let i=0;
-  let el=document.getElementById(id);
-  el.innerHTML="";
-
-  function typing(){
-    if(i<text.length){
-      el.innerHTML+=text.charAt(i++);
-      setTimeout(typing,speed);
-    } else if(cb) cb();
-  }
-  typing();
-}
-
-/* SKIP */
-function skipTyping(){
-  aboutTextEl.innerHTML=aboutText;
-  msgTextEl.innerHTML=msgText;
-}
+const msgText = `Hi baby imissyouuuuu, I just want to thank you for all of your sacrifices for us. Thank you for treating me right, making me laugh, giving me hugs and kisses. I notice lately malambing ka sakin and I loved that side of you. Thank you so much baby. I also want to remind you that I love you so much baby. Mahal na mahal ka ng adi, no words can explain how much I love you. Sorry din baby kase nung nakaraan I make you mad kase I didn't fix my bags, and nagkukulang ang adi sa oras last time, I'm sorry baby ko. Always remember na mahal na mahal ka ng adi. iloveyouuuuu so much my love ❤️ `;
 </script>
 
 </body>
