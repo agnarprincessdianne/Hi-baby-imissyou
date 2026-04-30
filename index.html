@@ -15,8 +15,16 @@ body {
 }
 
 /* screens */
-.screen { display: none; padding: 20px; }
-.active { display: block; }
+.screen {
+  display: none;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.active {
+  display: block;
+  opacity: 1;
+}
 
 /* PIN buttons */
 .pin-btn {
@@ -37,7 +45,6 @@ body {
   gap: 15px;
   margin-top: 30px;
 }
-
 .card {
   background: #2c2c54;
   padding: 25px;
@@ -45,16 +52,34 @@ body {
   font-size: 18px;
 }
 
-/* album grid */
+/* album */
 .album {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
-
 .album img {
   width: 100%;
   border-radius: 12px;
+  cursor: pointer;
+}
+
+/* fullscreen viewer */
+#viewer {
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background: rgba(0,0,0,0.9);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+#viewer img {
+  width: 90%;
+  max-width: 400px;
+  border-radius: 15px;
 }
 
 /* media */
@@ -62,6 +87,18 @@ video {
   width: 100%;
   max-width: 350px;
   border-radius: 12px;
+}
+
+/* notes */
+.note {
+  background: #ffffff;
+  color: #333;
+  padding: 18px;
+  border-radius: 15px;
+  margin: 15px 0;
+  text-align: left;
+  line-height: 1.6;
+  min-height: 120px;
 }
 
 /* button */
@@ -72,7 +109,6 @@ button {
   border-radius: 12px;
   background: #ff6b81;
   color: white;
-  font-size: 16px;
 }
 </style>
 </head>
@@ -121,119 +157,151 @@ button {
   <h2>📸 Album</h2>
 
   <div class="album">
-    <img src="photo1.jpg">
-    <img src="photo2.jpg">
-    <img src="photo3.jpg">
-    <img src="photo4.jpg">
-    <img src="photo5.jpg">
-    <img src="photo6.jpg">
-    <img src="photo7.jpg">
-    <img src="photo8.jpg">
-    <img src="photo9.jpg">
-    <img src="photo10.jpg">
-    <img src="photo11.jpg">
-    <img src="photo12.jpg">
-    <img src="photo13.jpg">
-    <img src="photo14.jpg">
-    <img src="photo15.jpg">
-    <img src="photo16.jpg">
-    <img src="photo17.jpg">
-    <img src="photo18.jpg">
-    <img src="photo19.jpg">
-    <img src="photo20.jpg">
+    <script>
+      for(let i=1;i<=20;i++){
+        document.write(`<img src="photo${i}.jpg" onclick="openImg(this.src)">`);
+      }
+    </script>
   </div>
 
   <button onclick="goBack()">Back</button>
 </div>
 
-<!-- MUSIC (VIDEO TYPE) -->
+<!-- FULLSCREEN VIEW -->
+<div id="viewer" onclick="closeImg()">
+  <img id="fullImg">
+</div>
+
+<!-- MUSIC -->
 <div id="music" class="screen">
   <h2>🎵 Music</h2>
-
   <video id="musicPlayer" loop>
     <source src="175f13c3a002766ca3242f36b5e5f0c8.mp4">
   </video>
-
   <button onclick="goBack()">Back</button>
 </div>
 
 <!-- VIDEO -->
 <div id="video" class="screen">
   <h2>🎥 Video</h2>
-
   <video id="vid" controls>
     <source src="video.mp4">
   </video>
-
   <button onclick="goBack()">Back</button>
 </div>
 
 <!-- MESSAGE -->
 <div id="message" class="screen">
   <h2>💌 Message</h2>
-  <p>
-    I'm really sorry mahal 😔<br>
-    Babawi ako sayo 🥺<br>
-    I love you so much ❤️
-  </p>
+
+  <div class="note">
+    <b>-About You-</b><br><br>
+    <span id="aboutText"></span>
+  </div>
+
+  <div class="note">
+    <b>-My message for you-</b><br><br>
+    <span id="msgText"></span>
+  </div>
 
   <button onclick="goBack()">Back</button>
 </div>
 
 <script>
-const PIN = "021423";
-let input = "";
+const PIN="021423";
+let input="";
 
+/* PIN */
 function press(n){
-  if(input.length < 6){
-    input += n;
+  if(input.length<6){
+    input+=n;
     update();
   }
-
-  if(input.length === 6){
-    if(input === PIN){
-      show('menu');
-    } else {
-      alert("Wrong PIN!");
-      clearPin();
-    }
+  if(input.length===6){
+    if(input===PIN){ show('menu'); }
+    else{ alert("Wrong PIN!"); clearPin(); }
   }
 }
+function del(){ input=input.slice(0,-1); update(); }
+function clearPin(){ input=""; update(); }
+function update(){ display.innerText=input.padEnd(6,"_"); }
 
-function del(){
-  input = input.slice(0,-1);
-  update();
-}
-
-function clearPin(){
-  input = "";
-  update();
-}
-
-function update(){
-  document.getElementById("display").innerText =
-    input.padEnd(6, "_");
-}
-
+/* NAV */
 function show(id){
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 
-  if(id === 'music'){
+  if(id==='music'){
     document.getElementById('musicPlayer').play();
+  }
+
+  if(id==='message'){
+    typeWriter(aboutText, "aboutText", 15, () => {
+      typeWriter(msgText, "msgText", 15);
+    });
   }
 }
 
+/* BACK */
 function goBack(){
-  const music = document.getElementById('musicPlayer');
-  music.pause();
-  music.currentTime = 0;
-
-  const vid = document.getElementById('vid');
-  vid.pause();
-  vid.currentTime = 0;
-
+  musicPlayer.pause(); musicPlayer.currentTime=0;
+  vid.pause(); vid.currentTime=0;
   show('menu');
+}
+
+/* IMAGE VIEWER */
+function openImg(src){
+  viewer.style.display='flex';
+  fullImg.src=src;
+}
+function closeImg(){
+  viewer.style.display='none';
+}
+
+/* TYPEWRITER */
+const aboutText = `Your go to-milk tea flavors:
+Dark nutella chsck
+Blueberry chsck
+Red Velvet
+Strawberry choco
+Dark choco
+Strawberry oreo choco
+
+You love Jollibee a lot, pineapple juice there and yum burger without patties.
+
+You like ham and cheese pizza and cheese fries.
+
+You like strawberry, chocolate, cookies and cream ice cream.
+
+You don’t like beans in halo-halo.
+
+You only eat repolyo, sitaw, potato and eggplant.
+
+You like putting lotion or water in your feet.`;
+
+const msgText = `Hi baby imissyouuuuu, thank you for everything. Thank you for loving me, making me laugh, and staying with me.
+
+I notice your sweetness lately and I love it so much.
+
+I love you so much mahal, no words can explain it.
+
+Sorry for my mistakes, I’ll do better for you.
+
+Always remember I love you so much ❤️`;
+
+function typeWriter(text, id, speed, cb){
+  let i=0;
+  const el=document.getElementById(id);
+  el.innerHTML="";
+
+  function typing(){
+    if(i<text.length){
+      el.innerHTML+=text.charAt(i);
+      i++;
+      setTimeout(typing,speed);
+    } else if(cb){ cb(); }
+  }
+  typing();
 }
 </script>
 
