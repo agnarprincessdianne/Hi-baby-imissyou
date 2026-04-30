@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>For You ❤️</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Handlee&display=swap" rel="stylesheet">
+
 <style>
 body {
   margin: 0;
@@ -26,7 +28,7 @@ body {
   opacity: 1;
 }
 
-/* PIN buttons */
+/* PIN */
 .pin-btn {
   width: 70px;
   height: 70px;
@@ -53,15 +55,15 @@ body {
 }
 
 /* album */
-.album {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
 .album img {
   width: 100%;
   border-radius: 12px;
   cursor: pointer;
+}
+.album {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
 }
 
 /* fullscreen viewer */
@@ -71,15 +73,45 @@ body {
   left:0;
   width:100%;
   height:100%;
-  background: rgba(0,0,0,0.9);
+  background: rgba(0,0,0,0.95);
   display:none;
   justify-content:center;
   align-items:center;
+  flex-direction: column;
 }
 #viewer img {
   width: 90%;
-  max-width: 400px;
+  max-width: 420px;
   border-radius: 15px;
+}
+
+/* dots */
+.dots {
+  margin-top: 15px;
+}
+.dot {
+  height: 10px;
+  width: 10px;
+  margin: 4px;
+  border-radius: 50%;
+  display: inline-block;
+  background: gray;
+}
+.dot.active {
+  background: white;
+}
+
+/* notes (paper style) */
+.note {
+  background: #fff8dc;
+  color: #2b2b2b;
+  padding: 22px;
+  border-radius: 12px;
+  margin: 15px 0;
+  text-align: left;
+  line-height: 1.7;
+  font-family: 'Handlee', cursive;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
 }
 
 /* media */
@@ -89,19 +121,7 @@ video {
   border-radius: 12px;
 }
 
-/* notes */
-.note {
-  background: #ffffff;
-  color: #333;
-  padding: 18px;
-  border-radius: 15px;
-  margin: 15px 0;
-  text-align: left;
-  line-height: 1.6;
-  min-height: 120px;
-}
-
-/* button */
+/* buttons */
 button {
   padding: 12px 18px;
   margin-top: 15px;
@@ -167,9 +187,10 @@ button {
   <button onclick="goBack()">Back</button>
 </div>
 
-<!-- FULLSCREEN VIEW -->
-<div id="viewer" onclick="closeImg()">
+<!-- FULLSCREEN -->
+<div id="viewer" onclick="closeViewer(event)">
   <img id="fullImg">
+  <div class="dots" id="dots"></div>
 </div>
 
 <!-- MUSIC -->
@@ -193,6 +214,8 @@ button {
 <!-- MESSAGE -->
 <div id="message" class="screen">
   <h2>💌 Message</h2>
+
+  <button onclick="skipTyping()">⏩ Skip Animation</button>
 
   <div class="note">
     <b>-About You-</b><br><br>
@@ -218,8 +241,8 @@ function press(n){
     update();
   }
   if(input.length===6){
-    if(input===PIN){ show('menu'); }
-    else{ alert("Wrong PIN!"); clearPin(); }
+    if(input===PIN) show('menu');
+    else { alert("Wrong PIN!"); clearPin(); }
   }
 }
 function del(){ input=input.slice(0,-1); update(); }
@@ -236,8 +259,8 @@ function show(id){
   }
 
   if(id==='message'){
-    typeWriter(aboutText, "aboutText", 15, () => {
-      typeWriter(msgText, "msgText", 15);
+    typeWriter(aboutText,"aboutText",15,()=>{
+      typeWriter(msgText,"msgText",15);
     });
   }
 }
@@ -249,17 +272,54 @@ function goBack(){
   show('menu');
 }
 
-/* IMAGE VIEWER */
-function openImg(src){
-  viewer.style.display='flex';
-  fullImg.src=src;
+/* IMAGE VIEWER + SWIPE */
+let images=[];
+let currentIndex=0;
+
+for(let i=1;i<=20;i++){
+  images.push(`photo${i}.jpg`);
 }
-function closeImg(){
-  viewer.style.display='none';
+
+function openImg(src){
+  currentIndex = images.indexOf(src);
+  viewer.style.display="flex";
+  updateImg();
+}
+
+function updateImg(){
+  fullImg.src = images[currentIndex];
+  updateDots();
+}
+
+function updateDots(){
+  let d="";
+  for(let i=0;i<images.length;i++){
+    d+=`<span class="dot ${i===currentIndex?'active':''}"></span>`;
+  }
+  dots.innerHTML=d;
+}
+
+/* swipe */
+let startX=0;
+viewer.addEventListener("touchstart",e=>startX=e.touches[0].clientX);
+viewer.addEventListener("touchend",e=>{
+  let endX=e.changedTouches[0].clientX;
+  if(startX-endX>50 && currentIndex<images.length-1){
+    currentIndex++; updateImg();
+  }
+  if(endX-startX>50 && currentIndex>0){
+    currentIndex--; updateImg();
+  }
+});
+
+function closeViewer(e){
+  if(e.target.id==="viewer"){
+    viewer.style.display="none";
+  }
 }
 
 /* TYPEWRITER */
-const aboutText = `Your go to-milk tea flavors:
+const aboutText=`Your go to-milk tea flavors:
 Dark nutella chsck
 Blueberry chsck
 Red Velvet
@@ -267,41 +327,38 @@ Strawberry choco
 Dark choco
 Strawberry oreo choco
 
-You love Jollibee a lot, pineapple juice there and yum burger without patties.
+You love Jollibee, yum burger no patty.
 
-You like ham and cheese pizza and cheese fries.
+You like pizza ham & cheese, cheese fries.
 
-You like strawberry, chocolate, cookies and cream ice cream.
+You love strawberry/choco ice cream.
 
 You don’t like beans in halo-halo.
 
-You only eat repolyo, sitaw, potato and eggplant.
+You like simple veggies.
 
-You like putting lotion or water in your feet.`;
+You like lotion/water on feet.`;
 
-const msgText = `Hi baby imissyouuuuu, thank you for everything. Thank you for loving me, making me laugh, and staying with me.
+const msgText=`Hi baby imissyouuuuu, I just want to thank you for all of your sacrifices for us. Thank you for treating me right, making me laugh, giving me hugs and kisses. I notice lately malambing ka sakin and I loved that side of you. Thank you so much baby. I also want to remind you that I love you so much baby. Mahal na mahal ka ng adi, no words can explain how much I love you. Sorry din baby kase nung nakaraan I make you mad kase I didn't fix my bags, and nagkukulang ang adi sa oras last time, I'm sorry baby ko. Always remember na mahal na mahal ka ng adi. iloveyouuuuu so much my love ❤️ `;
 
-I notice your sweetness lately and I love it so much.
-
-I love you so much mahal, no words can explain it.
-
-Sorry for my mistakes, I’ll do better for you.
-
-Always remember I love you so much ❤️`;
-
-function typeWriter(text, id, speed, cb){
+function typeWriter(text,id,speed,cb){
   let i=0;
-  const el=document.getElementById(id);
+  let el=document.getElementById(id);
   el.innerHTML="";
 
   function typing(){
     if(i<text.length){
-      el.innerHTML+=text.charAt(i);
-      i++;
+      el.innerHTML+=text.charAt(i++);
       setTimeout(typing,speed);
-    } else if(cb){ cb(); }
+    } else if(cb) cb();
   }
   typing();
+}
+
+/* SKIP */
+function skipTyping(){
+  aboutTextEl.innerHTML=aboutText;
+  msgTextEl.innerHTML=msgText;
 }
 </script>
 
