@@ -54,18 +54,6 @@ body {
   font-size: 18px;
 }
 
-/* album */
-.album img {
-  width: 100%;
-  border-radius: 12px;
-  cursor: pointer;
-}
-.album {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
-
 /* fullscreen viewer */
 #viewer {
   position: fixed;
@@ -101,7 +89,7 @@ body {
   background: white;
 }
 
-/* notes (paper style) */
+/* notes */
 .note {
   background: #fff8dc;
   color: #2b2b2b;
@@ -112,6 +100,7 @@ body {
   line-height: 1.7;
   font-family: 'Handlee', cursive;
   box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  white-space: pre-line;
 }
 
 /* media */
@@ -175,16 +164,6 @@ button {
 <!-- ALBUM -->
 <div id="album" class="screen">
   <h2>📸 Album</h2>
-
-  <div class="album">
-    <script>
-      for(let i=1;i<=20;i++){
-        document.write(`<img src="photo${i}.jpg" onclick="openImg(this.src)">`);
-      }
-    </script>
-  </div>
-
-  <button onclick="goBack()">Back</button>
 </div>
 
 <!-- FULLSCREEN -->
@@ -214,8 +193,6 @@ button {
 <!-- MESSAGE -->
 <div id="message" class="screen">
   <h2>💌 Message</h2>
-
-  <button onclick="skipTyping()">⏩ Skip Animation</button>
 
   <div class="note">
     <b>-About You-</b><br><br>
@@ -258,9 +235,19 @@ function show(id){
     document.getElementById('musicPlayer').play();
   }
 
+  if(id==='album'){
+    currentIndex = 0;
+    viewer.style.display = "flex";
+    updateImg();
+  }
+
   if(id==='message'){
+    isTyping = true;
+
     typeWriter(aboutText,"aboutText",15,()=>{
-      typeWriter(msgText,"msgText",15);
+      typeWriter(msgText,"msgText",15,()=>{
+        isTyping = false;
+      });
     });
   }
 }
@@ -269,21 +256,16 @@ function show(id){
 function goBack(){
   musicPlayer.pause(); musicPlayer.currentTime=0;
   vid.pause(); vid.currentTime=0;
+  viewer.style.display="none";
   show('menu');
 }
 
-/* IMAGE VIEWER + SWIPE */
+/* IMAGES */
 let images=[];
 let currentIndex=0;
 
 for(let i=1;i<=20;i++){
   images.push(`photo${i}.jpg`);
-}
-
-function openImg(src){
-  currentIndex = images.indexOf(src);
-  viewer.style.display="flex";
-  updateImg();
 }
 
 function updateImg(){
@@ -299,7 +281,7 @@ function updateDots(){
   dots.innerHTML=d;
 }
 
-/* swipe */
+/* SWIPE */
 let startX=0;
 viewer.addEventListener("touchstart",e=>startX=e.touches[0].clientX);
 viewer.addEventListener("touchend",e=>{
@@ -312,34 +294,58 @@ viewer.addEventListener("touchend",e=>{
   }
 });
 
+/* CLOSE VIEWER */
 function closeViewer(e){
   if(e.target.id==="viewer"){
     viewer.style.display="none";
+    show('menu');
   }
 }
 
 /* TYPEWRITER */
-const aboutText=`Your go to-milk tea flavors:
-Dark nutella chsck
-Blueberry chsck
-Red Velvet
-Strawberry choco
-Dark choco
-Strawberry oreo choco
+let isTyping = false;
 
-You love Jollibee, yum burger no patty.
+const aboutText = `• Your go-to milk tea flavors:
+  - Dark Nutella
+  - Blueberry cheesecake
+  - Red Velvet
+  - Strawberry choco
+  - Dark choco
+  - Strawberry Oreo choco
 
-You like pizza ham & cheese, cheese fries.
+• You love Jollibee (yum burger, no patty 😆)
 
-You love strawberry/choco ice cream.
+• You like:
+  - Pizza (ham & cheese)
+  - Cheese fries
 
-You don’t like beans in halo-halo.
+• Favorite ice cream:
+  - Strawberry
+  - Chocolate
 
-You like simple veggies.
+• You don’t like beans in halo-halo
 
-You like lotion/water on feet.`;
+• You like simple veggies
 
-const msgText=`Hi baby imissyouuuuu, I just want to thank you for all of your sacrifices for us. Thank you for treating me right, making me laugh, giving me hugs and kisses. I notice lately malambing ka sakin and I loved that side of you. Thank you so much baby. I also want to remind you that I love you so much baby. Mahal na mahal ka ng adi, no words can explain how much I love you. Sorry din baby kase nung nakaraan I make you mad kase I didn't fix my bags, and nagkukulang ang adi sa oras last time, I'm sorry baby ko. Always remember na mahal na mahal ka ng adi. iloveyouuuuu so much my love ❤️ `;
+• You like lotion/water on your feet`;
+
+const msgText=`Hi baby imissyouuuuu, I just want to thank you for all of your sacrifices for us.
+
+Thank you for treating me right, making me laugh, giving me hugs and kisses.
+
+I notice lately malambing ka sakin and I loved that side of you.
+
+Thank you so much baby.
+
+I also want to remind you that I love you so much baby.
+
+Mahal na mahal ka ng adi, no words can explain how much I love you.
+
+Sorry din baby kase nung nakaraan I made you mad.
+
+Always remember na mahal na mahal ka ng adi.
+
+iloveyouuuuu so much my love ❤️`;
 
 function typeWriter(text,id,speed,cb){
   let i=0;
@@ -347,19 +353,32 @@ function typeWriter(text,id,speed,cb){
   el.innerHTML="";
 
   function typing(){
+    if(!isTyping){
+      el.innerHTML = text;
+      if(cb) cb();
+      return;
+    }
+
     if(i<text.length){
       el.innerHTML+=text.charAt(i++);
       setTimeout(typing,speed);
-    } else if(cb) cb();
+    } else if(cb){
+      cb();
+    }
   }
+
   typing();
 }
 
-/* SKIP */
-function skipTyping(){
-  aboutTextEl.innerHTML=aboutText;
-  msgTextEl.innerHTML=msgText;
-}
+/* TAP TO SKIP */
+document.getElementById("message").addEventListener("click", function(){
+  if(isTyping){
+    isTyping = false;
+
+    document.getElementById("aboutText").innerHTML = aboutText;
+    document.getElementById("msgText").innerHTML = msgText;
+  }
+});
 </script>
 
 </body>
