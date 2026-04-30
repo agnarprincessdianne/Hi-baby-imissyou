@@ -8,116 +8,100 @@
 <link href="https://fonts.googleapis.com/css2?family=Handlee&display=swap" rel="stylesheet">
 
 <style>
-body {
-  margin: 0;
-  font-family: 'Segoe UI';
-  background: #1e1e2f;
-  color: white;
-  text-align: center;
+body{
+  margin:0;
+  font-family:'Segoe UI';
+  background:#1e1e2f;
+  color:white;
+  text-align:center;
 }
 
 /* screens */
-.screen {
-  display: none;
-  padding: 20px;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-.active {
-  display: block;
-  opacity: 1;
-}
+.screen{display:none;padding:20px;}
+.active{display:block;}
 
 /* PIN */
-.pin-btn {
-  width: 70px;
-  height: 70px;
-  font-size: 22px;
-  margin: 8px;
-  border-radius: 15px;
-  border: none;
-  background: #ff6b81;
-  color: white;
+.pin-btn{
+  width:70px;height:70px;margin:8px;
+  font-size:22px;border:none;border-radius:15px;
+  background:#ff6b81;color:white;
 }
 
 /* menu */
-.menu {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  margin-top: 30px;
+.menu{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;margin-top:30px;
 }
-.card {
-  background: #2c2c54;
-  padding: 25px;
-  border-radius: 18px;
-  font-size: 18px;
+.card{
+  background:#2c2c54;
+  padding:25px;border-radius:18px;
 }
 
-/* fullscreen viewer */
-#viewer {
-  position: fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background: rgba(0,0,0,0.95);
+/* FULLSCREEN ALBUM */
+#albumViewer{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:black;
   display:none;
+  flex-direction:column;
   justify-content:center;
   align-items:center;
-  flex-direction: column;
 }
-#viewer img {
-  width: 90%;
-  max-width: 420px;
-  border-radius: 15px;
+#albumViewer img{
+  width:100%;
+  max-height:80vh;
+  object-fit:contain;
+}
+.dots{
+  margin-top:10px;
+}
+.dot{
+  height:8px;width:8px;
+  background:gray;
+  border-radius:50%;
+  margin:3px;
+  display:inline-block;
+}
+.dot.active{background:white;}
+
+/* note */
+.note{
+  background:#fff8dc;
+  color:#2b2b2b;
+  padding:20px;
+  border-radius:12px;
+  margin:15px 0;
+  font-family:'Handlee',cursive;
+  text-align:left;
 }
 
-/* dots */
-.dots {
-  margin-top: 15px;
-}
-.dot {
-  height: 10px;
-  width: 10px;
-  margin: 4px;
-  border-radius: 50%;
-  display: inline-block;
-  background: gray;
-}
-.dot.active {
-  background: white;
-}
-
-/* notes */
-.note {
-  background: #fff8dc;
-  color: #2b2b2b;
-  padding: 22px;
-  border-radius: 12px;
-  margin: 15px 0;
-  text-align: left;
-  line-height: 1.7;
-  font-family: 'Handlee', cursive;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-  white-space: pre-line;
+/* envelope */
+.envelope{
+  background:#ff6b81;
+  padding:40px;
+  border-radius:15px;
+  margin:20px auto;
+  width:80%;
+  max-width:300px;
 }
 
 /* media */
-video {
-  width: 100%;
-  max-width: 350px;
-  border-radius: 12px;
+video{
+  width:100%;
+  max-width:350px;
+  border-radius:12px;
 }
 
-/* buttons */
-button {
-  padding: 12px 18px;
-  margin-top: 15px;
-  border: none;
-  border-radius: 12px;
-  background: #ff6b81;
-  color: white;
+/* button */
+button{
+  padding:12px 18px;
+  margin-top:15px;
+  border:none;
+  border-radius:12px;
+  background:#ff6b81;
+  color:white;
 }
 </style>
 </head>
@@ -126,85 +110,85 @@ button {
 
 <!-- PIN -->
 <div id="pin" class="screen active">
-  <h2>🔐 Enter PIN</h2>
-  <p>*Clue: the day you said yes*</p>
-  <h2 id="display">______</h2>
+<h2>🔐 Enter PIN</h2>
+<p>*Clue: the day you said yes*</p>
+<h2 id="display">______</h2>
 
-  <div>
-    <button class="pin-btn" onclick="press(1)">1</button>
-    <button class="pin-btn" onclick="press(2)">2</button>
-    <button class="pin-btn" onclick="press(3)">3</button><br>
+<div>
+<button class="pin-btn" onclick="press(1)">1</button>
+<button class="pin-btn" onclick="press(2)">2</button>
+<button class="pin-btn" onclick="press(3)">3</button><br>
 
-    <button class="pin-btn" onclick="press(4)">4</button>
-    <button class="pin-btn" onclick="press(5)">5</button>
-    <button class="pin-btn" onclick="press(6)">6</button><br>
+<button class="pin-btn" onclick="press(4)">4</button>
+<button class="pin-btn" onclick="press(5)">5</button>
+<button class="pin-btn" onclick="press(6)">6</button><br>
 
-    <button class="pin-btn" onclick="press(7)">7</button>
-    <button class="pin-btn" onclick="press(8)">8</button>
-    <button class="pin-btn" onclick="press(9)">9</button><br>
+<button class="pin-btn" onclick="press(7)">7</button>
+<button class="pin-btn" onclick="press(8)">8</button>
+<button class="pin-btn" onclick="press(9)">9</button><br>
 
-    <button class="pin-btn" onclick="del()">←</button>
-    <button class="pin-btn" onclick="press(0)">0</button>
-    <button class="pin-btn" onclick="clearPin()">C</button>
-  </div>
+<button class="pin-btn" onclick="del()">←</button>
+<button class="pin-btn" onclick="press(0)">0</button>
+<button class="pin-btn" onclick="clearPin()">C</button>
+</div>
 </div>
 
 <!-- MENU -->
 <div id="menu" class="screen">
-  <h2>I Hope you enjoy your stay my love ❤️</h2>
+<h2>I Hope you enjoy your stay my love ❤️</h2>
 
-  <div class="menu">
-    <div class="card" onclick="show('album')">📸 Album</div>
-    <div class="card" onclick="show('music')">🎵 Music</div>
-    <div class="card" onclick="show('video')">🎥 Video</div>
-    <div class="card" onclick="show('message')">💌 Message</div>
-  </div>
+<div class="menu">
+<div class="card" onclick="openAlbum()">📸 Album</div>
+<div class="card" onclick="show('music')">🎵 Music</div>
+<div class="card" onclick="show('video')">🎥 Video</div>
+<div class="card" onclick="show('message')">💌 Message</div>
+</div>
 </div>
 
-<!-- ALBUM -->
-<div id="album" class="screen">
-  <h2>📸 Album</h2>
-</div>
-
-<!-- FULLSCREEN -->
-<div id="viewer" onclick="closeViewer(event)">
-  <img id="fullImg">
-  <div class="dots" id="dots"></div>
+<!-- ALBUM FULLSCREEN -->
+<div id="albumViewer">
+<img id="albumImg">
+<div class="dots" id="dots"></div>
+<button onclick="closeAlbum()">Back</button>
 </div>
 
 <!-- MUSIC -->
 <div id="music" class="screen">
-  <h2>🎵 Music</h2>
-  <video id="musicPlayer" loop>
-    <source src="175f13c3a002766ca3242f36b5e5f0c8.mp4">
-  </video>
-  <button onclick="goBack()">Back</button>
+<h2>🎵 Music</h2>
+<video id="musicPlayer" loop>
+<source src="175f13c3a002766ca3242f36b5e5f0c8.mp4">
+</video>
+<button onclick="goBack()">Back</button>
 </div>
 
 <!-- VIDEO -->
 <div id="video" class="screen">
-  <h2>🎥 Video</h2>
-  <video id="vid" controls>
-    <source src="video.mp4">
-  </video>
-  <button onclick="goBack()">Back</button>
+<h2>🎥 Video</h2>
+<video id="vid" controls>
+<source src="video.mp4">
+</video>
+<button onclick="goBack()">Back</button>
 </div>
 
 <!-- MESSAGE -->
 <div id="message" class="screen">
-  <h2>💌 Message</h2>
+<h2>💌 Message</h2>
 
-  <div class="note">
-    <b>-About You-</b><br><br>
-    <span id="aboutText"></span>
-  </div>
+<div id="envelope" class="envelope" onclick="openLetter()">
+💖 Tap to open letter
+</div>
 
-  <div class="note">
-    <b>-My message for you-</b><br><br>
-    <span id="msgText"></span>
-  </div>
+<div class="note">
+<b>-About You-</b><br><br>
+<span id="aboutText"></span>
+</div>
 
-  <button onclick="goBack()">Back</button>
+<div class="note">
+<b>-My message for you-</b><br><br>
+<span id="msgText"></span>
+</div>
+
+<button onclick="goBack()">Back</button>
 </div>
 
 <script>
@@ -213,172 +197,131 @@ let input="";
 
 /* PIN */
 function press(n){
-  if(input.length<6){
-    input+=n;
-    update();
-  }
-  if(input.length===6){
-    if(input===PIN) show('menu');
-    else { alert("Wrong PIN!"); clearPin(); }
-  }
-}
-function del(){ input=input.slice(0,-1); update(); }
-function clearPin(){ input=""; update(); }
-function update(){ display.innerText=input.padEnd(6,"_"); }
+if(input.length<6){input+=n;update();}
+if(input.length===6){
+if(input===PIN) show('menu');
+else{alert("Wrong PIN");clearPin();}
+}}
+function del(){input=input.slice(0,-1);update();}
+function clearPin(){input="";update();}
+function update(){display.innerText=input.padEnd(6,"_");}
 
 /* NAV */
 function show(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
 
-  if(id==='music'){
-    document.getElementById('musicPlayer').play();
-  }
-
-  if(id==='album'){
-    currentIndex = 0;
-    viewer.style.display = "flex";
-    updateImg();
-  }
-
-  if(id==='message'){
-    isTyping = true;
-
-    typeWriter(aboutText,"aboutText",15,()=>{
-      typeWriter(msgText,"msgText",15,()=>{
-        isTyping = false;
-      });
-    });
-  }
+if(id==='music'){musicPlayer.play();}
+if(id==='message'){resetMessage();}
 }
 
 /* BACK */
 function goBack(){
-  musicPlayer.pause(); musicPlayer.currentTime=0;
-  vid.pause(); vid.currentTime=0;
-  viewer.style.display="none";
-  show('menu');
+musicPlayer.pause();musicPlayer.currentTime=0;
+vid.pause();vid.currentTime=0;
+show('menu');
 }
 
-/* IMAGES */
+/* ===== ALBUM ===== */
 let images=[];
-let currentIndex=0;
+for(let i=1;i<=20;i++){images.push(`photo${i}.jpg`);}
+let index=0;
 
-for(let i=1;i<=20;i++){
-  images.push(`photo${i}.jpg`);
+function openAlbum(){
+document.getElementById("albumViewer").style.display="flex";
+showImage();
 }
 
-function updateImg(){
-  fullImg.src = images[currentIndex];
-  updateDots();
+function showImage(){
+albumImg.src=images[index];
+let d="";
+for(let i=0;i<images.length;i++){
+d+=`<span class="dot ${i===index?'active':''}"></span>`;
+}
+dots.innerHTML=d;
 }
 
-function updateDots(){
-  let d="";
-  for(let i=0;i<images.length;i++){
-    d+=`<span class="dot ${i===currentIndex?'active':''}"></span>`;
-  }
-  dots.innerHTML=d;
-}
-
-/* SWIPE */
 let startX=0;
-viewer.addEventListener("touchstart",e=>startX=e.touches[0].clientX);
-viewer.addEventListener("touchend",e=>{
-  let endX=e.changedTouches[0].clientX;
-  if(startX-endX>50 && currentIndex<images.length-1){
-    currentIndex++; updateImg();
-  }
-  if(endX-startX>50 && currentIndex>0){
-    currentIndex--; updateImg();
-  }
+albumViewer.addEventListener("touchstart",e=>startX=e.touches[0].clientX);
+albumViewer.addEventListener("touchend",e=>{
+let endX=e.changedTouches[0].clientX;
+if(startX-endX>50 && index<images.length-1){index++;showImage();}
+if(endX-startX>50 && index>0){index--;showImage();}
 });
 
-/* CLOSE VIEWER */
-function closeViewer(e){
-  if(e.target.id==="viewer"){
-    viewer.style.display="none";
-    show('menu');
-  }
+function closeAlbum(){
+document.getElementById("albumViewer").style.display="none";
+}
+
+/* ===== MESSAGE ===== */
+let typing=true;
+
+function openLetter(){
+document.getElementById("envelope").style.display="none";
+
+typeWriter(aboutText,"aboutText",12,()=>{
+typeWriter(msgText,"msgText",12);
+});
+
+document.getElementById("message").onclick=instantShow;
+}
+
+function instantShow(){
+if(!typing)return;
+aboutTextEl.innerHTML=aboutText;
+msgTextEl.innerHTML=msgText;
+typing=false;
+}
+
+function resetMessage(){
+document.getElementById("envelope").style.display="block";
+aboutTextEl.innerHTML="";
+msgTextEl.innerHTML="";
+typing=true;
 }
 
 /* TYPEWRITER */
-let isTyping = false;
-
-const aboutText = `• Your go-to milk tea flavors:
-  - Dark Nutella
-  - Blueberry cheesecake
-  - Red Velvet
-  - Strawberry choco
-  - Dark choco
-  - Strawberry Oreo choco
-
-• You love Jollibee (yum burger, no patty 😆)
-
-• You like:
-  - Pizza (ham & cheese)
-  - Cheese fries
-
-• Favorite ice cream:
-  - Strawberry
-  - Chocolate
-
-• You don’t like beans in halo-halo
-
-• You like simple veggies
-
-• You like lotion/water on your feet`;
-
-const msgText=`Hi baby imissyouuuuu, I just want to thank you for all of your sacrifices for us.
-
-Thank you for treating me right, making me laugh, giving me hugs and kisses.
-
-I notice lately malambing ka sakin and I loved that side of you.
-
-Thank you so much baby.
-
-I also want to remind you that I love you so much baby.
-
-Mahal na mahal ka ng adi, no words can explain how much I love you.
-
-Sorry din baby kase nung nakaraan I made you mad.
-
-Always remember na mahal na mahal ka ng adi.
-
-iloveyouuuuu so much my love ❤️`;
-
 function typeWriter(text,id,speed,cb){
-  let i=0;
-  let el=document.getElementById(id);
-  el.innerHTML="";
+let i=0;
+let el=document.getElementById(id);
+typing=true;
 
-  function typing(){
-    if(!isTyping){
-      el.innerHTML = text;
-      if(cb) cb();
-      return;
-    }
-
-    if(i<text.length){
-      el.innerHTML+=text.charAt(i++);
-      setTimeout(typing,speed);
-    } else if(cb){
-      cb();
-    }
-  }
-
-  typing();
+function t(){
+if(i<text.length){
+el.innerHTML+=text.charAt(i++);
+setTimeout(t,speed);
+}else{
+typing=false;
+if(cb)cb();
+}}
+t();
 }
 
-/* TAP TO SKIP */
-document.getElementById("message").addEventListener("click", function(){
-  if(isTyping){
-    isTyping = false;
+/* TEXT */
+const aboutText=`Your go to-milk tea flavors:
+Dark nutella chsck
+Blueberry chsck
+Red Velvet
+Strawberry choco
+Dark choco
+Strawberry oreo chsck
 
-    document.getElementById("aboutText").innerHTML = aboutText;
-    document.getElementById("msgText").innerHTML = msgText;
-  }
-});
+You love Jollibee a lot, you loved the pineapple juice there and you only like the yum burger without the patties (sakin mo pinapakain, maybe because ayaw mo nga sa beef)
+
+You like ham and cheese flav in pizza's
+and cheese in fries.
+
+Sa ice creams you like strawberry, chocolate, cookies and cream flavors.
+
+You don't like the Beans in the Halo-halo.
+
+You only eat repolyo, sitaw, potato and eggplant in vegetables.`;
+
+const msgText=`Hi baby imissyouuuuu, I just want to thank you for all of your sacrifices for us. Thank you for treating me right, making me laugh, giving me hugs and kisses. I notice lately malambing ka sakin and I loved that side of you. Thank you so much baby. I also want to remind you that I love you so much baby. Mahal na mahal ka ng adi, no words can explain how much I love you. Sorry din baby kase nung nakaraan I make you mad kase I didn't fix my bags, and nagkukulang ang adi sa oras last time, I'm sorry baby ko. Always remember na mahal na mahal ka ng adi. iloveyouuuuu so much my love ❤️ `;
+
+/* FIX ELEMENTS */
+const aboutTextEl=document.getElementById("aboutText");
+const msgTextEl=document.getElementById("msgText");
 </script>
 
 </body>
