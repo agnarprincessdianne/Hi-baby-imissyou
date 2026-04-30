@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>For You ❤️</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI';
+  background: linear-gradient(to right, #1e1e2f, #2c2c54);
+  color: #fff;
+  overflow: hidden;
+}
+
+/* SCREENS */
+.screen {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 100%;
+  padding: 20px;
+  transition: all 0.5s ease;
+}
+
+.active {
+  left: 0;
+}
+
+button {
+  padding: 10px 15px;
+  margin: 8px;
+  border: none;
+  border-radius: 10px;
+  background: #ff6b81;
+  color: white;
+  cursor: pointer;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+img {
+  width: 100px;
+  margin: 5px;
+  border-radius: 10px;
+}
+
+/* TYPEWRITER */
+.typewriter {
+  border-right: 2px solid white;
+  white-space: nowrap;
+  overflow: hidden;
+}
+</style>
+</head>
+
+<body>
+
+<!-- PIN -->
+<div id="pin" class="screen active">
+  <h2>🔐 Enter PIN</h2>
+  <p>*Clue: the day you said yes*</p>
+  <h3 id="display">______</h3>
+
+  <div>
+    <button onclick="press(1)">1</button>
+    <button onclick="press(2)">2</button>
+    <button onclick="press(3)">3</button><br>
+    <button onclick="press(4)">4</button>
+    <button onclick="press(5)">5</button>
+    <button onclick="press(6)">6</button><br>
+    <button onclick="press(7)">7</button>
+    <button onclick="press(8)">8</button>
+    <button onclick="press(9)">9</button><br>
+    <button onclick="del()">←</button>
+    <button onclick="press(0)">0</button>
+    <button onclick="clearPin()">C</button>
+  </div>
+</div>
+
+<!-- MENU -->
+<div id="menu" class="screen">
+  <h1>Welcome Mahal ❤️</h1>
+
+  <button onclick="show('albums')">📸 Albums</button>
+  <button onclick="show('notes')">📝 Notes</button>
+  <button onclick="show('gallery')">🖼️ Gallery</button>
+  <button onclick="show('music')">🎵 Music</button>
+  <button onclick="show('videos')">🎥 Videos</button>
+  <button onclick="show('message')">💌 Message</button>
+
+  <br><br>
+  <button onclick="show('secret')">🎁 Secret</button>
+</div>
+
+<!-- ALBUMS -->
+<div id="albums" class="screen">
+  <h2>📸 Our Memories</h2>
+
+  <div class="grid">
+    <img src="photo1.jpg">
+    <img src="photo2.jpg">
+    <img src="photo3.jpg">
+    <img src="photo4.jpg">
+    <img src="photo5.jpg">
+    <img src="photo6.jpg">
+    <img src="photo7.jpg">
+    <img src="photo8.jpg">
+    <img src="photo9.jpg">
+    <img src="photo10.jpg">
+    <img src="photo11.jpg">
+    <img src="photo12.jpg">
+    <img src="photo13.jpg">
+    <img src="photo14.jpg">
+    <img src="photo15.jpg">
+    <img src="photo16.jpg">
+    <img src="photo17.jpg">
+    <img src="photo18.jpg">
+    <img src="photo19.jpg">
+    <img src="photo20.jpg">
+  </div>
+
+  <button onclick="show('menu')">Back</button>
+</div>
+
+<!-- NOTES -->
+<div id="notes" class="screen">
+  <h2>📝 Notes</h2>
+  <p>Mahal, sorry sa lahat 🥺 babawi ako ❤️</p>
+  <button onclick="show('menu')">Back</button>
+</div>
+
+<!-- GALLERY -->
+<div id="gallery" class="screen">
+  <h2>🖼️ Gallery</h2>
+  <img src="photo1.jpg">
+  <img src="photo2.jpg">
+  <img src="photo3.jpg">
+  <img src="photo4.jpg">
+  <button onclick="show('menu')">Back</button>
+</div>
+
+<!-- MUSIC -->
+<div id="music" class="screen">
+  <h2>🎵 Music</h2>
+  <audio controls>
+    <source src="music.mp3">
+  </audio>
+  <button onclick="show('menu')">Back</button>
+</div>
+
+<!-- VIDEOS -->
+<div id="videos" class="screen">
+  <h2>🎥 Videos</h2>
+  <video width="300" controls>
+    <source src="video.mp4">
+  </video>
+  <button onclick="show('menu')">Back</button>
+</div>
+
+<!-- MESSAGE -->
+<div id="message" class="screen">
+  <h2>💌 Message</h2>
+  <p id="typeText" class="typewriter"></p>
+  <button onclick="show('menu')">Back</button>
+</div>
+
+<!-- SECRET -->
+<div id="secret" class="screen">
+  <h2>🎁 Surprise</h2>
+  <p>I love you so much mahal ❤️🥺</p>
+  <button onclick="show('menu')">Back</button>
+</div>
+
+<script>
+const PIN = "021423";
+let input = "";
+
+function press(n){
+  if(input.length < 6){
+    input += n;
+    update();
+  }
+  if(input.length === 6){
+    if(input === PIN){
+      show('menu');
+    } else {
+      alert("Wrong PIN!");
+      clearPin();
+    }
+  }
+}
+
+function del(){
+  input = input.slice(0,-1);
+  update();
+}
+
+function clearPin(){
+  input = "";
+  update();
+}
+
+function update(){
+  document.getElementById("display").innerText =
+    input.padEnd(6, "_");
+}
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+
+  if(id === 'message'){
+    typeWriter();
+  }
+}
+
+/* TYPEWRITER */
+const text = "I'm really sorry mahal... babawi ako sayo 🥺 I love you so much ❤️";
+let i = 0;
+
+function typeWriter(){
+  i = 0;
+  document.getElementById("typeText").innerHTML = "";
+  let speed = 40;
+
+  function typing(){
+    if(i < text.length){
+      document.getElementById("typeText").innerHTML += text.charAt(i);
+      i++;
+      setTimeout(typing, speed);
+    }
+  }
+  typing();
+}
+</script>
+
+</body>
+</html>
