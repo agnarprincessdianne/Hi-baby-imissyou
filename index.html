@@ -77,16 +77,6 @@ body{
   text-align:left;
 }
 
-/* envelope */
-.envelope{
-  background:#ff6b81;
-  padding:40px;
-  border-radius:15px;
-  margin:20px auto;
-  width:80%;
-  max-width:300px;
-}
-
 /* media */
 video{
   width:100%;
@@ -145,7 +135,7 @@ button{
 </div>
 </div>
 
-<!-- ALBUM FULLSCREEN -->
+<!-- ALBUM -->
 <div id="albumViewer">
 <img id="albumImg">
 <div class="dots" id="dots"></div>
@@ -173,10 +163,6 @@ button{
 <!-- MESSAGE -->
 <div id="message" class="screen">
 <h2>💌 Message</h2>
-
-<div id="envelope" class="envelope" onclick="openLetter()">
-💖 Tap to open letter
-</div>
 
 <div class="note">
 <b>-About You-</b><br><br>
@@ -212,7 +198,7 @@ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
 document.getElementById(id).classList.add('active');
 
 if(id==='music'){musicPlayer.play();}
-if(id==='message'){resetMessage();}
+if(id==='message'){startMessage();}
 }
 
 /* BACK */
@@ -222,7 +208,7 @@ vid.pause();vid.currentTime=0;
 show('menu');
 }
 
-/* ===== ALBUM ===== */
+/* ALBUM */
 let images=[];
 for(let i=1;i<=20;i++){images.push(`photo${i}.jpg`);}
 let index=0;
@@ -253,11 +239,13 @@ function closeAlbum(){
 document.getElementById("albumViewer").style.display="none";
 }
 
-/* ===== MESSAGE ===== */
+/* MESSAGE */
 let typing=true;
 
-function openLetter(){
-document.getElementById("envelope").style.display="none";
+function startMessage(){
+aboutTextEl.innerHTML="";
+msgTextEl.innerHTML="";
+typing=true;
 
 typeWriter(aboutText,"aboutText",12,()=>{
 typeWriter(msgText,"msgText",12);
@@ -273,18 +261,10 @@ msgTextEl.innerHTML=msgText;
 typing=false;
 }
 
-function resetMessage(){
-document.getElementById("envelope").style.display="block";
-aboutTextEl.innerHTML="";
-msgTextEl.innerHTML="";
-typing=true;
-}
-
 /* TYPEWRITER */
 function typeWriter(text,id,speed,cb){
 let i=0;
 let el=document.getElementById(id);
-typing=true;
 
 function t(){
 if(i<text.length){
@@ -299,14 +279,14 @@ t();
 
 /* TEXT */
 const aboutText=`Your go to-milk tea flavors:
-Dark nutella chsck
-Blueberry chsck
-Red Velvet
-Strawberry choco
-Dark choco
-Strawberry oreo chsck
+Dark nutella chsck,
+Blueberry chsck,
+Red Velvet,
+Strawberry choco,
+Dark choco,
+Strawberry oreo chsck.
 
-You love Jollibee a lot, you loved the pineapple juice there and you only like the yum burger without the patties (sakin mo pinapakain, maybe because ayaw mo nga sa beef)
+You love Jollibee a lot, you loved the pineapple juice there and you only like the yum burger without the patties (sakin mo pinapakain, maybe because ayaw mo nga sa beef).
 
 You like ham and cheese flav in pizza's
 and cheese in fries.
@@ -315,11 +295,13 @@ Sa ice creams you like strawberry, chocolate, cookies and cream flavors.
 
 You don't like the Beans in the Halo-halo.
 
-You only eat repolyo, sitaw, potato and eggplant in vegetables.`;
+You only eat repolyo, sitaw, potato and eggplant in vegetables.
+
+You like to put some lotion/water in your feet.`;
 
 const msgText=`Hi baby imissyouuuuu, I just want to thank you for all of your sacrifices for us. Thank you for treating me right, making me laugh, giving me hugs and kisses. I notice lately malambing ka sakin and I loved that side of you. Thank you so much baby. I also want to remind you that I love you so much baby. Mahal na mahal ka ng adi, no words can explain how much I love you. Sorry din baby kase nung nakaraan I make you mad kase I didn't fix my bags, and nagkukulang ang adi sa oras last time, I'm sorry baby ko. Always remember na mahal na mahal ka ng adi. iloveyouuuuu so much my love ❤️ `;
 
-/* FIX ELEMENTS */
+/* elements */
 const aboutTextEl=document.getElementById("aboutText");
 const msgTextEl=document.getElementById("msgText");
 </script>
