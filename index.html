@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>For You ❤️</title>
 
 <style>
@@ -17,44 +18,61 @@ body {
 .screen { display: none; padding: 20px; }
 .active { display: block; }
 
-/* buttons */
-button {
-  padding: 12px 15px;
-  margin: 10px;
+/* PIN buttons */
+.pin-btn {
+  width: 70px;
+  height: 70px;
+  font-size: 22px;
+  margin: 8px;
+  border-radius: 15px;
   border: none;
-  border-radius: 12px;
   background: #ff6b81;
   color: white;
-  font-size: 16px;
 }
 
-/* menu grid */
+/* menu */
 .menu {
   display: grid;
-  grid-template-columns: repeat(2, 150px);
-  gap: 20px;
-  justify-content: center;
-  margin-top: 40px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-top: 30px;
 }
 
 .card {
   background: #2c2c54;
-  padding: 20px;
-  border-radius: 15px;
-  cursor: pointer;
-}
-
-/* images */
-img {
-  width: 100px;
-  margin: 5px;
-  border-radius: 10px;
+  padding: 25px;
+  border-radius: 18px;
+  font-size: 18px;
 }
 
 /* album grid */
 .album {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.album img {
+  width: 100%;
+  border-radius: 12px;
+}
+
+/* media */
+video {
+  width: 100%;
+  max-width: 350px;
+  border-radius: 12px;
+}
+
+/* button */
+button {
+  padding: 12px 18px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 12px;
+  background: #ff6b81;
+  color: white;
+  font-size: 16px;
 }
 </style>
 </head>
@@ -65,33 +83,36 @@ img {
 <div id="pin" class="screen active">
   <h2>🔐 Enter PIN</h2>
   <p>*Clue: the day you said yes*</p>
-  <h3 id="display">______</h3>
+  <h2 id="display">______</h2>
 
   <div>
-    <button onclick="press(1)">1</button>
-    <button onclick="press(2)">2</button>
-    <button onclick="press(3)">3</button><br>
-    <button onclick="press(4)">4</button>
-    <button onclick="press(5)">5</button>
-    <button onclick="press(6)">6</button><br>
-    <button onclick="press(7)">7</button>
-    <button onclick="press(8)">8</button>
-    <button onclick="press(9)">9</button><br>
-    <button onclick="del()">←</button>
-    <button onclick="press(0)">0</button>
-    <button onclick="clearPin()">C</button>
+    <button class="pin-btn" onclick="press(1)">1</button>
+    <button class="pin-btn" onclick="press(2)">2</button>
+    <button class="pin-btn" onclick="press(3)">3</button><br>
+
+    <button class="pin-btn" onclick="press(4)">4</button>
+    <button class="pin-btn" onclick="press(5)">5</button>
+    <button class="pin-btn" onclick="press(6)">6</button><br>
+
+    <button class="pin-btn" onclick="press(7)">7</button>
+    <button class="pin-btn" onclick="press(8)">8</button>
+    <button class="pin-btn" onclick="press(9)">9</button><br>
+
+    <button class="pin-btn" onclick="del()">←</button>
+    <button class="pin-btn" onclick="press(0)">0</button>
+    <button class="pin-btn" onclick="clearPin()">C</button>
   </div>
 </div>
 
 <!-- MENU -->
 <div id="menu" class="screen">
-  <h1>For You ❤️</h1>
+  <h2>I Hope you enjoy your stay my love ❤️</h2>
 
   <div class="menu">
-    <div class="card" onclick="show('album')">📸<br>Album</div>
-    <div class="card" onclick="show('music')">🎵<br>Music</div>
-    <div class="card" onclick="show('video')">🎥<br>Video</div>
-    <div class="card" onclick="show('message')">💌<br>Message</div>
+    <div class="card" onclick="show('album')">📸 Album</div>
+    <div class="card" onclick="show('music')">🎵 Music</div>
+    <div class="card" onclick="show('video')">🎥 Video</div>
+    <div class="card" onclick="show('message')">💌 Message</div>
   </div>
 </div>
 
@@ -125,13 +146,13 @@ img {
   <button onclick="goBack()">Back</button>
 </div>
 
-<!-- MUSIC -->
+<!-- MUSIC (VIDEO TYPE) -->
 <div id="music" class="screen">
   <h2>🎵 Music</h2>
 
-  <audio id="player" loop>
-    <source src="music.mp3">
-  </audio>
+  <video id="musicPlayer" loop>
+    <source src="music.mp4">
+  </video>
 
   <button onclick="goBack()">Back</button>
 </div>
@@ -140,11 +161,10 @@ img {
 <div id="video" class="screen">
   <h2>🎥 Video</h2>
 
-  <video id="vid" width="300" controls>
+  <video id="vid" controls>
     <source src="video.mp4">
   </video>
 
-  <br>
   <button onclick="goBack()">Back</button>
 </div>
 
@@ -164,7 +184,6 @@ img {
 const PIN = "021423";
 let input = "";
 
-/* PIN */
 function press(n){
   if(input.length < 6){
     input += n;
@@ -196,25 +215,20 @@ function update(){
     input.padEnd(6, "_");
 }
 
-/* NAVIGATION */
 function show(id){
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 
-  // auto play music
   if(id === 'music'){
-    document.getElementById('player').play();
+    document.getElementById('musicPlayer').play();
   }
 }
 
-/* BACK */
 function goBack(){
-  // stop music
-  const music = document.getElementById('player');
+  const music = document.getElementById('musicPlayer');
   music.pause();
   music.currentTime = 0;
 
-  // stop video
   const vid = document.getElementById('vid');
   vid.pause();
   vid.currentTime = 0;
