@@ -240,25 +240,28 @@ document.getElementById("albumViewer").style.display="none";
 }
 
 /* MESSAGE */
-let typing=true;
-
 function startMessage(){
 aboutTextEl.innerHTML="";
 msgTextEl.innerHTML="";
-typing=true;
 
 typeWriter(aboutText,"aboutText",12,()=>{
 typeWriter(msgText,"msgText",12);
 });
-
-document.getElementById("message").onclick=instantShow;
 }
 
-function instantShow(){
-if(!typing)return;
-aboutTextEl.innerHTML=aboutText;
-msgTextEl.innerHTML=msgText;
-typing=false;
+/* TYPEWRITER */
+function typeWriter(text,id,speed,cb){
+let i=0;
+let el=document.getElementById(id);
+
+function t(){
+if(i<text.length){
+el.innerHTML+=text.charAt(i++);
+setTimeout(t,speed);
+}else{
+if(cb)cb();
+}}
+t();
 }
 
 /* TEXT */
@@ -279,9 +282,7 @@ Sa ice creams you like strawberry, chocolate, cookies and cream flavors.
 
 You don't like the Beans in the Halo-halo.
 
-You only eat repolyo, sitaw, potato and eggplant in vegetables.
-
-You like to put some lotion/water in your feet.`;
+You only eat repolyo, sitaw, potato and eggplant in vegetables.`;
 
 const msgText=`Hi baby imissyouuuuu, I just want to thank you for all of your sacrifices for us. Thank you for treating me right, making me laugh, giving me hugs and kisses. I notice lately malambing ka sakin and I loved that side of you. Thank you so much baby. I also want to remind you that I love you so much baby. Mahal na mahal ka ng adi, no words can explain how much I love you. Sorry din baby kase nung nakaraan I make you mad kase I didn't fix my bags, and nagkukulang ang adi sa oras last time, I'm sorry baby ko. Always remember na mahal na mahal ka ng adi. iloveyouuuuu so much my love ❤️ `;
 
