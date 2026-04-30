@@ -261,22 +261,6 @@ msgTextEl.innerHTML=msgText;
 typing=false;
 }
 
-/* TYPEWRITER */
-function typeWriter(text,id,speed,cb){
-let i=0;
-let el=document.getElementById(id);
-
-function t(){
-if(i<text.length){
-el.innerHTML+=text.charAt(i++);
-setTimeout(t,speed);
-}else{
-typing=false;
-if(cb)cb();
-}}
-t();
-}
-
 /* TEXT */
 const aboutText=`Your go to-milk tea flavors:
 Dark nutella chsck,
